@@ -2,8 +2,12 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Gate;
+use App\Extensions\Illuminate\Auth\ExtendedUserProvider;
+use App\OauthAccessToken;
+use App\OauthAuthCode;
+use Auth;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Laravel\Passport\Passport;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -25,6 +29,15 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        Passport::routes();
+        Passport::useTokenModel(OauthAccessToken::class);
+        Passport::useAuthCodeModel(OauthAuthCode::class);
+        /**
+         * Register @see \App\Extensions\Illuminate\Auth\ExtendedUserProvider
+         */
+        Auth::provider('extended', function ($app, $config) {
+            $model = $config['model'];
+            return new ExtendedUserProvider($app['hash'], $model);
+        });
     }
 }

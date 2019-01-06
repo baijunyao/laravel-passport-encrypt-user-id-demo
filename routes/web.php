@@ -14,3 +14,16 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+/*
+|--------------------------------------------------------------------------
+| oauth
+|--------------------------------------------------------------------------
+*/
+Route::prefix('oauth')->namespace('Oauth')->group(function () {
+    Route::post('authorize', 'ApproveAuthorizationController@approve')->name('passport.authorizations.approve');
+});
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
